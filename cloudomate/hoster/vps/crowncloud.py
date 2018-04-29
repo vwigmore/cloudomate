@@ -82,21 +82,24 @@ class CrownCloud(SolusvmHoster):
 
     @classmethod
     def _parse_options(cls, page):
+        # Get the connection speed.
+        connection = page.findAll('p')
+        connection = connection[3].text.split('Shared ')
+        connection = connection[1].split(' Gbit/s')
+        connection = int(connection[0])
         tables = page.findAll('table')
         for table in tables:  # There are multiple tables with server options on the page
             for row in table.findAll('tr'):
                 if len(row.findAll('td')) > 0:  # Ignore headers
-                    option = cls._parse_row(row)
+                    option = cls._parse_row(row,connection)
                     if option is not None:
                         yield option
 
     @staticmethod
-    def _parse_row(row):
+    def _parse_row(row, connection):
         details = row.findAll('td')
-
         name = details[0].text
-
-        price = details[6].text
+        price = details[5].text
         if 'yearly only' in price:
             return None  # Only yearly price possible
         try:
@@ -115,11 +118,7 @@ class CrownCloud(SolusvmHoster):
         bandwidth = details[4].text.split(' GB')
         bandwidth = bandwidth[0]
 
-        connection = details[4].text
-        i = connection.index('Gbps')
-        connection = int(connection[i - 1])
-
-        purchase_url = details[7].find('a')['href']
+        purchase_url = details[6].find('a')['href']
 
         return VpsOption(name, cores, memory, storage, bandwidth, connection, price, purchase_url)
 

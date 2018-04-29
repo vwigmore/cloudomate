@@ -134,5 +134,4 @@ class UndergroundPrivate(SolusvmHoster):
         form.choose_submit(submit)
 
         # Let SolusVM class handle the rest
-        gateway = self.get_gateway()
-        return self._fill_user_form(gateway.get_name(), errorbox_class='errorbox')
+        return self._fill_user_form('spectrocoin', errorbox_class='errorbox')
