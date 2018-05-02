@@ -21,6 +21,7 @@ standard_library.install_aliases()
 
 
 class TestCoinbase(TestCase):
+    # TODO find a new test coinbase url the old one isn't used anymore
     # test url from https://developers.coinbase.com/docs/merchants/payment-pages
     TEST_URL = 'https://www.coinbase.com/checkouts/2b30a03995ec62f15bdc54e8428caa87'
     amount = None

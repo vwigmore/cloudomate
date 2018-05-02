@@ -20,7 +20,7 @@ else:
 class UndergroundPrivate(Gateway):
     @staticmethod
     def get_name():
-        return "blockchainv2"
+        return "SpectroCoin"
 
     @classmethod
     def extract_info(cls, url):

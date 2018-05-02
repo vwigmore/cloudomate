@@ -76,10 +76,14 @@ class UndergroundPrivate(SolusvmHoster):
 
         # Retrieve the payment URL from an iFrame
         soup = self._browser.get_current_page()
-        iframe = soup.select_one('iframe')
-        url = iframe['src']
+        action = soup.find('form')['action']
+        invoices = soup.find('form')
+        invoice = str(invoices).split('><')[1]
+        invoice_id = str(invoice).split('"')[5]
 
-        self.pay(wallet, self.get_gateway(), url)
+        # TODO: Find out how to combine the link and the invoice Id
+        action = action + '?invoice=' + invoice_id
+        self.pay(wallet, self.get_gateway(), action)
 
     '''
     Hoster-specific methods that are needed to perform the actions
@@ -134,4 +138,5 @@ class UndergroundPrivate(SolusvmHoster):
         form.choose_submit(submit)
 
         # Let SolusVM class handle the rest
-        return self._fill_user_form('spectrocoin', errorbox_class='errorbox')
+        gateway = self.get_gateway()
+        return self._fill_user_form(gateway.get_name(), errorbox_class='errorbox')
