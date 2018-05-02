@@ -120,7 +120,7 @@ class SolusvmHoster(VpsHoster):
 
         form['firstname'] = self._settings.get('user', "firstname")
         form['lastname'] = self._settings.get('user', "lastname")
-        form['email'] = self._settings.get('user', "email")
+        form['email'] = self._change_email_provider(self._settings.get('user', "email"), '@gmail.com')
         form['phonenumber'] = self._settings.get('user', "phonenumber")
         form['companyname'] = self._settings.get('user', "companyname")
         form['address1'] = self._settings.get('address', "address")
@@ -138,7 +138,6 @@ class SolusvmHoster(VpsHoster):
             pass
 
         page = self._browser.submit_selected()
-
         # Error handling
         if 'checkout' in page.url:
             soup = BeautifulSoup(page.text, 'lxml')
@@ -147,3 +146,8 @@ class SolusvmHoster(VpsHoster):
             sys.exit(2)
 
         return page
+
+    def _change_email_provider(self, old_email, provider):
+        new_email, _ = old_email.split('@')
+        new_email = new_email + provider
+        return new_email
