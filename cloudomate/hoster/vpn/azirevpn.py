@@ -57,12 +57,12 @@ class AzireVpn(VpnHoster):
         # Get string with price from the website
         browser = cls._create_browser()
         browser.open(cls.OPTIONS_URL)
-        soup = browser.get_current_page()
-        strong = soup.select_one("div.prices > ul > li:nth-of-type(2) > ul > li:nth-of-type(1) strong")
-        string = strong.get_text()
+        soup = browser.get_current_page().find_all('strong')
+        string = str(soup)
+        words = string.split()
 
         # Calculate the price in USD
-        eur = float(string[string.index("€") + 2: string.index("/") - 1])
+        eur = float(words[2])
         price = round(CurrencyRates().convert("EUR", "USD", eur), 2)
 
         name, _ = cls.get_metadata()
