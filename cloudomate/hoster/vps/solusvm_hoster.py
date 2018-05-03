@@ -147,7 +147,9 @@ class SolusvmHoster(VpsHoster):
 
         return page
 
-    def _change_email_provider(self, old_email, provider):
-        new_email, _ = old_email.split('@')
-        new_email = new_email + provider
+    def _change_email_provider(self, old_email, new_provider):
+        new_email, old_provider = old_email.split('@')
+        if old_provider != 'email.com':
+            return old_email
+        new_email = new_email + new_provider
         return new_email
