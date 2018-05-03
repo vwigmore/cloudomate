@@ -26,7 +26,7 @@ setup(
     description='Automate buying VPS instances with Bitcoin',
     long_description=long_description,
 
-    url='https://github.com/vwigmore/c  loudomate',
+    url='https://github.com/vwigmore/cloudomate',
 
     author='PlebNet',
     author_email='authentic8989@gmail.com',
