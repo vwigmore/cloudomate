@@ -163,7 +163,7 @@ class Wallet(object):
             print('Not enough funds')
             return
 
-        transaction_hex = self.wallet_handler.create_transaction(amount, address, fee)
+        transaction_hex = self.wallet_handler.create_transaction(amount, address)
         success, transaction_hash = self.wallet_handler.broadcast(transaction_hex)
         if not success:
             print(('Transaction not successfully broadcast, do error handling: {0}'.format(transaction_hash)))
@@ -206,7 +206,7 @@ class ElectrumWalletHandler(object):
         if self.not_running_before:
             subprocess.call(self.command + ['daemon', 'stop'])
 
-    def create_transaction(self, amount, address, fee):
+    def create_transaction(self, amount, address, fee=None):
         """
         Create a transaction
         :param amount: amount of bitcoins to be transferred

@@ -35,7 +35,6 @@ class ClientArea(object):
     def get_ip(self, service=None):
         if service is None:
             service = self.get_services_first()
-
         self._browser.open(service.url)
         soup = self._browser.get_current_page()
         rows = soup.select('div#domain > div.row')

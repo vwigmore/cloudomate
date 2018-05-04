@@ -73,6 +73,9 @@ class Hoster(with_metaclass(ABCMeta)):
         """
         pass
 
+    def get_browser(self):
+        return self._browser
+
     @classmethod
     def pay(cls, wallet, gateway, url):
         """Do a payment (should be moved to the payment gateways?)

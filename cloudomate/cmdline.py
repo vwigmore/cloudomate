@@ -52,7 +52,6 @@ providers = CaseInsensitiveDict({
     ])
 })
 
-
 def execute(cmd=sys.argv[1:]):
     parser = ArgumentParser(description="Cloudomate")
 

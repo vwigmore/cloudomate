@@ -26,10 +26,10 @@ setup(
     description='Automate buying VPS instances with Bitcoin',
     long_description=long_description,
 
-    url='https://github.com/Jaapp-/Cloudomate',
+    url='https://github.com/vwigmore/cloudomate',
 
     author='PlebNet',
-    author_email='plebnet@heijligers.me',
+    author_email='authentic8989@gmail.com',
 
     license='LGPLv3',
 
