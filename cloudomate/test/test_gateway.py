@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 
 import os
 from unittest import TestCase
+from unittest import skip
 from builtins import open
 
 from mock import patch, Mock
@@ -28,6 +29,7 @@ class TestCoinbase(TestCase):
     address = None
 
     @classmethod
+    @skip('the TEST_URL isn\t used anymore needs a replacement url')
     def setUpClass(cls):
         cls.amount, cls.address = Coinbase.extract_info(cls.TEST_URL)
 
