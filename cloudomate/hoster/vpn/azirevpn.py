@@ -19,10 +19,10 @@ standard_library.install_aliases()
 
 
 class AzireVpn(VpnHoster):
-    REGISTER_URL = "https://manager.azirevpn.com/en/auth/register"
+    REGISTER_URL = "https://www.azirevpn.com/manager/auth/register"
     CONFIGURATION_URL = "https://www.azirevpn.com/support/configuration/generate?os=others&country=se1&nat=0&keys=0&protocol=udp&tls=gcm&port=random"
-    LOGIN_URL = "https://manager.azirevpn.com/auth/login"
-    ORDER_URL = "https://manager.azirevpn.com/order"
+    LOGIN_URL = "https://www.azirevpn.com/manager/auth/login"
+    ORDER_URL = "https://azirevpn.com/manager/order"
     OPTIONS_URL = "https://www.azirevpn.com"
     DASHBOARD_URL = "https://manager.azirevpn.com"
 
@@ -58,7 +58,8 @@ class AzireVpn(VpnHoster):
         browser = cls._create_browser()
         browser.open(cls.OPTIONS_URL)
         soup = browser.get_current_page()
-        strong = soup.select_one("div.prices > ul > li:nth-of-type(2) > ul > li:nth-of-type(1) strong")
+        # strong = soup.select_one("div.prices > ul > li:nth-of-type(2) > ul > li:nth-of-type(1) strong")
+        strong = soup.select_one("section.prices > div > ul > li > div > strong")
         string = strong.get_text()
 
         # Calculate the price in USD
@@ -139,7 +140,7 @@ class AzireVpn(VpnHoster):
         self._browser.open(self.ORDER_URL)
         form = self._browser.select_form("form#orderForm")
         form["package"] = "1"
-        form["payment_gateway"] = "bitpay"
+        form["coinpayment_crypto"] = "BTC"
         form["tos"] = True
         page = self._browser.submit_selected()
 
