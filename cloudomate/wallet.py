@@ -110,12 +110,14 @@ class Wallet(object):
     Wallets with passwords may still be used, but passwords will have to be entered manually.
     """
 
-    def __init__(self, wallet_command=None, wallet_path=None):
+    def __init__(self, wallet_command=None, wallet_path=None, testnet=None):
         if wallet_command is None:
             if os.path.exists('/usr/local/bin/electrum'):
                 wallet_command = ['/usr/local/bin/electrum']
             else:
                 wallet_command = ['/usr/bin/env', 'electrum']
+        if testnet:
+            wallet_command.append('--testnet')
         self.command = wallet_command
         self.wallet_handler = ElectrumWalletHandler(wallet_command, wallet_path)
 

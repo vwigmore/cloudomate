@@ -11,8 +11,10 @@ from future.moves.urllib import request
 from future.moves.urllib.parse import urlsplit, parse_qs
 
 from cloudomate.gateway.gateway import Gateway, PaymentInfo
+from cloudomate.util.settings import Settings
+from cloudomate import globals
+
 import electrum.bitcoin as bitcoin
-from electrum.bitcoin import COIN
 from electrum import paymentrequest as pr
 
 standard_library.install_aliases()
@@ -32,24 +34,25 @@ class BitPay(Gateway):
         """
         # https://bitpay.com/ or https://test.bitpay.com
         uspl = urlsplit(url)
-        base_url = "{0.scheme}://{0.netloc}".format(uspl) 
+        base_url = "{0.scheme}://{0.netloc}".format(uspl)
+        print(base_url)
         invoice_id = uspl.query.split("=")[1]
-        
+
         # On the browser, users have to select between Bitcoin and Bitcoin cash 
         # trigger bitcoin selection for successful transaction 
-        trigger_url = "{}/invoice-noscript?id={}&buyerSelectedTransactionCurrency=BTC".format(base_url, uspl.query)
+        trigger_url = "{}/invoice-noscript?id={}&buyerSelectedTransactionCurrency=BTC".format(base_url, invoice_id)
+        print(trigger_url)
         request.urlopen(trigger_url)
 
         # Make the payment
         payment_url = "bitcoin:?r={}/i/{}".format(base_url, invoice_id)
+        print(payment_url)
 
-        # TODO: check testnet
-        # if ..
-        # bitcoin.set_testnet() 
-        if bitcoin.is_address(payment_url):
-            print("Payment url is valid: {}".format(payment_url))
+        # Check for testnet mode
+        if globals.global_testnet and uspl.netloc == 'test.bitpay.com':
+            bitcoin.set_testnet()
         else:
-            print("Payment url invalid: {}".format(payment_url))
+            raise Exception('Should --testnet be on?')
 
         # get payment request using Electrum's lib
         pq = parse_qs(urlsplit(payment_url).query)
@@ -57,10 +60,10 @@ class BitPay(Gateway):
         payreq = pr.get_payment_request(out.get('r')).get_dict()
 
         # amount is in satoshis (1/10e8 Bitcoin)
-        amount = float(payreq.get('amount'))/pow(10,8)
+        amount = float(payreq.get('amount')) / pow(10, 8)
         address = payreq.get('requestor')
 
-	return PaymentInfo(amount, address)
+        return PaymentInfo(amount, address)
 
     @staticmethod
     def get_gateway_fee():
