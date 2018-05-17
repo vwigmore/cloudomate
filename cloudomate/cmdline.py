@@ -29,6 +29,8 @@ from cloudomate.util.fakeuserscraper import UserScraper
 from cloudomate.util.settings import Settings
 from cloudomate.wallet import Wallet
 
+from cloudomate import globals
+
 standard_library.install_aliases()
 
 
@@ -124,6 +126,7 @@ def add_parser_purchase(subparsers, provider_type):
     parser_purchase.add_argument("-cc", "--countrycode", help="country code")
     parser_purchase.add_argument("-z", "--zipcode", help="zipcode")
     parser_purchase.add_argument("--randomuser", action="store_true", help="Use random user info")
+    parser_purchase.add_argument("--testnet", action="store_true", help="Use Electrum's testnet bitcoins (for testing)")
 
     if provider_type == 'vps':
         parser_purchase.add_argument("option", help="The %s option number (see options)" % provider_type.upper(),
@@ -264,6 +267,18 @@ def purchase(args):
     if args.randomuser:
         _merge_random_user_data(user_settings)
 
+        if args.testnet:
+            user_settings.put('user', 'testnet', 'on')
+            globals.global_testnet = True
+            print('testnet on')
+        else:
+            user_settings.put('user', 'testnet', 'off')
+            globals.global_testnet = False
+            print('testnet off')
+        user_settings.save_settings()
+        print('Random user settings used: ' + user_settings.get_default_config_location())
+
+
     if not _check_provider(provider, user_settings):
         print("Missing option")
         sys.exit(2)
@@ -293,6 +308,12 @@ def _get_user_settings(args, provider=None):
     else:
         user_settings.read_settings()
     _merge_arguments(user_settings, provider, vars(args))
+
+    # Set global testnet variable according to configuration
+    if user_settings.has_key('user', 'testnet') and user_settings.get('user', 'testnet') == 'on':
+        globals.global_testnet = True
+    else:
+        globals.global_testnet = False
     return user_settings
 
 
@@ -457,10 +478,12 @@ def _options_vpn(provider):
 def _register(provider, vps_option, settings):
     # For now use standard wallet implementation through Electrum
     # If wallet path is defined in config, use that.
+    testnet = globals.global_testnet
+
     if settings.has_key('client', 'walletpath'):
-        wallet = Wallet(wallet_path=settings.get('client', 'walletpath'))
+        wallet = Wallet(wallet_path=settings.get('client', 'walletpath'), testnet=testnet)
     else:
-        wallet = Wallet()
+        wallet = Wallet(testnet=testnet)
 
     provider_instance = provider(settings)
     provider_instance.purchase(wallet, vps_option)
