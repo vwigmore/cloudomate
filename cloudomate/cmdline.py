@@ -54,17 +54,19 @@ providers = CaseInsensitiveDict({
     ])
 })
 
+
 def execute(cmd=sys.argv[1:]):
     parser = ArgumentParser(description="Cloudomate")
+    parser.add_argument('--version', action='version', version='%(prog)s '+globals.__version__)
 
     subparsers = parser.add_subparsers(dest="type")
+
     add_vps_parsers(subparsers)
     add_vpn_parsers(subparsers)
     subparsers.required = True
 
     args = parser.parse_args(cmd)
     args.func(args)
-
 
 def add_vpn_parsers(subparsers):
     vpn_parsers = subparsers.add_parser("vpn")
@@ -277,7 +279,6 @@ def purchase(args):
             print('testnet off')
         user_settings.save_settings()
         print('Random user settings used: ' + user_settings.get_default_config_location())
-
 
     if not _check_provider(provider, user_settings):
         print("Missing option")
