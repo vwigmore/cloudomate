@@ -19,12 +19,12 @@ standard_library.install_aliases()
 
 
 class AzireVpn(VpnHoster):
-    REGISTER_URL = "https://manager.azirevpn.com/en/auth/register"
-    CONFIGURATION_URL = "https://www.azirevpn.com/support/configuration/generate?os=others&country=se1&nat=0&keys=0&protocol=udp&tls=gcm&port=random"
-    LOGIN_URL = "https://manager.azirevpn.com/auth/login"
-    ORDER_URL = "https://manager.azirevpn.com/order"
+    REGISTER_URL = "https://www.azirevpn.com/en/manager/auth/register"
+    CONFIGURATION_URL = "https://www.azirevpn.com/cfg/openvpn/generate?os=others&country=se1&nat=0&keys=0&protocol=udp&tls=gcm&port=random"
+    LOGIN_URL = "https://www.azirevpn.com/manager/auth/login"
+    ORDER_URL = "https://www.azirevpn.com/manager/order"
     OPTIONS_URL = "https://www.azirevpn.com"
-    DASHBOARD_URL = "https://manager.azirevpn.com"
+    DASHBOARD_URL = "https://www.azirevpn.com/manager"
 
     '''
     Information about the Hoster
