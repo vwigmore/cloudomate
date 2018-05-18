@@ -13,6 +13,7 @@ from forex_python.converter import CurrencyRates
 from future import standard_library
 
 from cloudomate.gateway.bitpay import BitPay
+from cloudomate import wallet as wallet_util
 from cloudomate.hoster.vpn.vpn_hoster import VpnHoster, VpnOption, VpnStatus, VpnConfiguration
 
 standard_library.install_aliases()
@@ -96,11 +97,25 @@ class AzireVpn(VpnHoster):
         page = self._order()
 
         # Make the payment
-        self.pay(wallet, self.get_gateway(), page.url)
+        self.pay(wallet, page.url)
 
     '''
     Hoster-specific methods that are needed to perform the actions
     '''
+
+    def pay(self, wallet, url):
+
+        self._browser.open(url)
+        soup = self._browser.get_current_page()
+        address = soup.select_one("div.transaction > input").get("value")
+        amount = float(soup.select_one("div.transaction > input:nth-of-type(2)").get("value"))
+        fee = wallet_util.get_network_fee()
+        print(('Calculated fee: %s' % fee))
+        transaction_hash = wallet.pay(address, amount, fee)
+        print('Done purchasing')
+        return transaction_hash
+
+
 
     def _register(self):
         self._browser.open(self.REGISTER_URL)
@@ -139,7 +154,8 @@ class AzireVpn(VpnHoster):
         self._browser.open(self.ORDER_URL)
         form = self._browser.select_form("form#orderForm")
         form["package"] = "1"
-        form["payment_gateway"] = "bitpay"
+        form["payment_gateway"] = "coinpayment"
+        form["coinpayment_crypto"] = "BTC"
         form["tos"] = True
         page = self._browser.submit_selected()
 
