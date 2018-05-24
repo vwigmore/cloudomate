@@ -85,12 +85,57 @@ class ProxHost(SolusvmHoster):
 
         return list(options)
 
+    def get_configuration(self):
+        data = {
+            'firstname': self._settings.get('user', "firstname"),
+            'lastname': self._settings.get('user', "lastname"),
+            'username': self._settings.get('user', "username"),
+            'email': self._change_email_provider(self._settings.get('user', "email"), '@gmail.com'),
+            'phonenumber': self._settings.get('user', "phonenumber"),
+            'companyname': self._settings.get('user', "companyname"),
+            'address1': self._settings.get('address', "address"),
+            'city': self._settings.get('address', "city"),
+            'state': self._settings.get('address', "state"),
+            'postcode': self._settings.get('address', "zipcode"),
+            'country': self._settings.get('address', 'countrycode'),
+            'password': self._settings.get('user', "password"),
+            'password2': self._settings.get('user', "password")
+        }
+
+        res = requests.post(self.BASE_URL+'/getconfiguration', json=data, verify=False)
+        print(res)
+        config = res.content.decode('utf8')
+        return config
+
+    def get_status(self):
+        data = {
+            'firstname': self._settings.get('user', "firstname"),
+            'lastname': self._settings.get('user', "lastname"),
+            'username': self._settings.get('user', "username"),
+            'email': self._change_email_provider(self._settings.get('user', "email"), '@gmail.com'),
+            'phonenumber': self._settings.get('user', "phonenumber"),
+            'companyname': self._settings.get('user', "companyname"),
+            'address1': self._settings.get('address', "address"),
+            'city': self._settings.get('address', "city"),
+            'state': self._settings.get('address', "state"),
+            'postcode': self._settings.get('address', "zipcode"),
+            'country': self._settings.get('address', 'countrycode'),
+            'password': self._settings.get('user', "password"),
+            'password2': self._settings.get('user', "password")
+        }
+
+        res = requests.post(self.BASE_URL+'/getstatus', json=data, verify=False)
+        print(res)
+        status = res.content.decode('utf8')
+        return status
+
     def purchase(self, wallet, option):
         data = {
             'vmid': option.purchase_url,
             'price': option.price,
             'firstname': self._settings.get('user', "firstname"),
             'lastname': self._settings.get('user', "lastname"),
+            'username': self._settings.get('user', "username"),
             'email': self._change_email_provider(self._settings.get('user', "email"), '@gmail.com'),
             'phonenumber': self._settings.get('user', "phonenumber"),
             'companyname': self._settings.get('user', "companyname"),
