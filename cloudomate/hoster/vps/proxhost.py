@@ -118,13 +118,13 @@ class ProxHost(SolusvmHoster):
 
     def get_configuration(self):
         res = requests.post(self.BASE_URL+'/getconfiguration', json=self.json_user_config(), verify=False)
-        print(res)
+        print(res.content)
         config = json.loads(res.content)
         return VpsConfiguration(config['ip'], config['root_password'])
 
     def get_status(self):
         res = requests.post(self.BASE_URL+'/getstatus', json=self.json_user_config(), verify=False)
-        print(res)
+        print(res.content)
         status = json.loads(res.content.decode('utf8'))
         return VpsStatus(
             VpsStatusResourceNone,
