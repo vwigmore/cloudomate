@@ -173,7 +173,6 @@ class Wallet(object):
             print('Transaction successful')
         print(transaction_hex)
         print(success)
-        print(transaction_hash)
         return transaction_hash
 
 
@@ -261,3 +260,44 @@ class ElectrumWalletHandler(object):
             return subprocess.check_output(command).decode()
         else:
             subprocess.call(command)
+
+
+class TriblerWallet(object):
+    """
+    This class expects Tribler to be running and uses the wallet created via Tribler
+    """
+
+    def __init__(self, testnet=None):
+        if testnet:
+            self.coin = 'TBTC'
+        else:
+            self.coin = 'BTC'
+
+    def get_balance(self):
+        data = ['curl', '-X', 'GET', 'http://localhost:8085/wallets/' + self.coin + '/balance']
+
+        response = subprocess.Popen(data, stdout=subprocess.PIPE).communicate()[0]
+        available = json.loads(response)['balance']['available']
+        return float(available)
+
+    def pay(self, address, amount, fee=None):
+
+        """ Make call to Tribler wallet for paying to address """
+        tx_fee = 0 if fee is None else fee
+
+        if self.get_balance() < amount + tx_fee:
+            print('Not enough funds')
+            return
+
+        data = ['curl', '-X', 'POST', 'http://localhost:8085/wallets/' + self.coin + '/transfer',
+                '--data', 'amount=' + str(amount + tx_fee) + '&destination=' + address]
+
+        response = subprocess.Popen(data, stdout=subprocess.PIPE).communicate()[0]
+
+        if not response:
+            print('Transaction unsuccessfull')
+        else:
+            print('Transaction successful')
+            transaction_hash = json.loads(response)['txid']
+            print(transaction_hash)
+            return transaction_hash
